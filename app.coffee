@@ -1,5 +1,11 @@
 express = require 'express'
 path = require 'path'
+mongoose = require 'mongoose'
+Movie = require './models/movie'
+_ = require 'underscore'
+
+mongoose.connect 'mongodb://localhost/imooc'
+
 port = process.env.PORT || 3000
 app = module.exports = express()
 
@@ -7,55 +13,29 @@ app.set 'views','./views/pages'
 app.set 'view engine','jade'
 app.use(express.bodyParser())
 app.use(express.static(path.join(__dirname, 'bower_components')))
+app.locals.moment = require 'moment'
 app.listen port
 
 console.log "imooc started on port #{port}"
 
 # index page
 app.get '/', (req, res) ->
-	res.render 'index', {
-		title: 'imooc 首页'
-		movies: [{
-			title: '机械战警'
-			_id: 1
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title: '机械战警'
-			_id: 2
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title: '机械战警'
-			_id: 3
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title: '机械战警'
-			_id: 4
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title: '机械战警'
-			_id: 5
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title: '机械战警'
-			_id: 6
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		}]
-	}
+	Movie.fetch (err, movies) ->
+		console.log err if err
+		res.render 'index', {
+			title: 'imooc 首页'
+			movies: movies
+		}
 
 # detail
 app.get '/movie/:id', (req, res) ->
-	res.render 'detail', {
-		title: 'imooc 详情页'
-		movie: 
-			doctor: 'person'
-			country: 'USA'
-			title: 'movieName'
-			year: 2014
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-			language: 'English'
-			flash: 'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf'
-			summary: 'asdfasdfasdfasdfasdfasdfadsfasdfasdfasdfasdfasf'
-	}
+	id = req.params.id
+
+	Movie.findById id, (err, movie) ->
+		res.render 'detail', {
+			title: "imooc #{movie.title}"
+			movie: movie
+		}
 
 # admin
 app.get '/admin/movie', (req, res) ->
@@ -72,18 +52,51 @@ app.get '/admin/movie', (req, res) ->
 			language: ''
 	}
 
+# admin update movie
+app.get '/admin/update/:id', (req, res) ->
+	id = req.params.id
+	if id 
+		Movie.findById id, (err, movie) ->
+			res.render 'admin', {
+				title: 'imooc 后台更新页'
+				movie: movie
+			}
+
+# admin post movie
+app.post '/admin/movie/new', (req, res) ->
+	id = req.body.movie._id
+	movieObj = req.body.movie
+	_movie = null
+
+	if 'undefined' isnt id
+		Movie.findById id, (err, movie) ->
+			console.log err if err
+
+			_movie = _.extend(movie, movieObj)
+			_movie.save (err, movie) ->
+				console.log err if err
+				res.redirect "/movie/#{movie._id}"
+	else
+		_movie = new Movie({
+			doctor: movieObj.doctor
+			title: movieObj.title
+			country: movieObj.country
+			language: movieObj.language
+			year: movieObj.year
+			poster: movieObj.poster
+			flash: movieObj.flash
+			summary: movieObj.summary
+		})
+
+		_movie.save (err, movie) ->
+			console.log err if err
+			res.redirect "/movie/#{movie._id}"
+
 # list
 app.get '/admin/list', (req, res) ->
-	res.render 'list', {
-		title: 'imooc list'
-		movie: [{
-			doctor: 'person'
-			country: 'USA'
-			title: 'movieName'
-			year: 2014
-			poster: 'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-			language: 'English'
-			flash: 'http://player.youku.com/player.php/sid/XNjA1Njc0NTUy/v.swf'
-			summary: 'asdfasdfasdfasdfasdfasdfadsfasdfasdfasdfasdfasf'
-		}]
-	}
+	Movie.fetch (err, movies) ->
+		console.log err if err
+		res.render 'list', {
+			title: 'imooc 列表页'
+			movies: movies
+		}
