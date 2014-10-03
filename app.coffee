@@ -12,7 +12,7 @@ app = module.exports = express()
 app.set 'views','./views/pages'
 app.set 'view engine','jade'
 app.use(express.bodyParser())
-app.use(express.static(path.join(__dirname, 'bower_components')))
+app.use(express.static(path.join(__dirname, 'public')))
 app.locals.moment = require 'moment'
 app.listen port
 
@@ -100,3 +100,11 @@ app.get '/admin/list', (req, res) ->
 			title: 'imooc 列表页'
 			movies: movies
 		}
+
+# list delete movie
+app.delete '/admin/list', (req, res) ->
+	id = req.query.id
+
+	if id
+		Movie.remove {_id: id}, (err, movie) ->
+			if err then console.log err else res.json(success: 1)
