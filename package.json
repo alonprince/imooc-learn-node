@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "coffee-script": "^1.8.0",
+    "express": "^3.4.8",
+    "jade": "^1.7.0",
+    "moment": "^2.8.3",
+    "mongoose": "^3.8.17"
+  }
+}
