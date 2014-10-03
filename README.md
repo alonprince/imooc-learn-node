@@ -11,3 +11,5 @@ require('./app.coffee');
 ````
 
 然后新建你的``app.coffee``即可用coffee编程了
+
+markdown的语法也要熟练起来啊
