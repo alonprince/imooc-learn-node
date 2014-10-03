@@ -11,5 +11,28 @@
     "jade": "^1.7.0",
     "moment": "^2.8.3",
     "mongoose": "^3.8.17"
-  }
+  },
+  "name": "imooc",
+  "description": "使用coffeescript，学nodejs的过程中，熟悉coffeescript",
+  "version": "0.0.1",
+  "main": "app.js",
+  "devDependencies": {
+    "coffee-script": "^1.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/alonprince/imooc-learn-node.git"
+  },
+  "keywords": [
+    "imooc"
+  ],
+  "author": "Phishing",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alonprince/imooc-learn-node/issues"
+  },
+  "homepage": "https://github.com/alonprince/imooc-learn-node"
 }

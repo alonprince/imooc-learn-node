@@ -1,0 +1,25 @@
+{
+  "name": "imooc",
+  "version": "0.0.1",
+  "homepage": "https://github.com/alonprince/imooc-learn-node",
+  "authors": [
+    "alonprince@163.com"
+  ],
+  "description": "imooc",
+  "keywords": [
+    "imooc"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.2.0"
+  }
+}
