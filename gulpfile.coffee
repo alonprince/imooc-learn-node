@@ -1,4 +1,4 @@
-require('coffee-script/register')
+# require('coffee-script/register')
 gulp = require 'gulp'
 coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
