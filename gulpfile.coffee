@@ -4,6 +4,7 @@ coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
 uglify = require 'gulp-uglify'
 sourcemaps = require 'gulp-sourcemaps'
+nodemon = require 'gulp-nodemon'
 del = require 'del'
 
 paths = 
@@ -24,4 +25,13 @@ gulp.task 'scripts', ['clean'], () ->
 gulp.task 'watch', () ->
 	gulp.watch paths.scripts, ['scripts']
 
-gulp.task 'default', ['watch', 'scripts']
+gulp.task 'develop', () ->
+	nodemon({
+		script: 'app.coffee'
+	})
+	.on('change', ['scripts'])
+	.on('restart', () ->
+		console.log 'restarted!'
+	)
+
+gulp.task 'default', ['watch', 'scripts', 'develop']

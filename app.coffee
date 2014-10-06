@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.locals.moment = require 'moment'
 app.listen port
 
-console.log "imooc started on port #{port}"
+console.log "imooc is started on port #{port}"
 
 # index page
 app.get '/', (req, res) ->
