@@ -2,7 +2,9 @@ express = require 'express'
 path = require 'path'
 mongoose = require 'mongoose'
 Movie = require './models/movie'
+User = require './models/user'
 _ = require 'underscore'
+
 
 mongoose.connect 'mongodb://localhost/imooc'
 
@@ -26,6 +28,44 @@ app.get '/', (req, res) ->
 			title: 'imooc 首页'
 			movies: movies
 		}
+
+# signup
+app.post '/user/signup', (req, res) ->
+	_user = req.body.user
+	# req.param 'user'也能拿到user的信息
+	User.find({name: _user.name}, (err, user) ->
+		console.log err if err
+		if user
+			return res.redirect '/'
+		else
+			user = new User _user
+			user.save (err, user) ->
+				console.log err if err
+
+				res.redirect '/admin/userlist'
+	)
+
+#signin 
+app.post '/user/signin', (req, res) ->
+	_user = req.body.user
+	name = _user.name
+	password = _user.password
+
+	User.findOne name: name, (err, user) ->
+		console.log err if err
+
+		return res.redirect '/' if !user
+
+		console.log user
+		user.comparePassword password, (err, isMatch) ->
+			console.log err if err
+
+			if isMatch
+				console.log 'password is match'
+				return res.redirect '/'
+			else
+				console.log 'password is not match'
+		return	
 
 # detail
 app.get '/movie/:id', (req, res) ->
@@ -99,6 +139,15 @@ app.get '/admin/list', (req, res) ->
 		res.render 'list', {
 			title: 'imooc 列表页'
 			movies: movies
+		}
+
+# userlist
+app.get '/admin/userlist', (req, res) ->
+	User.fetch (err, users) ->
+		console.log err if err
+		res.render 'userlist', {
+			title: 'imooc 用户列表'
+			users: users
 		}
 
 # list delete movie
