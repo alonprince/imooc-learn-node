@@ -1,4 +1,5 @@
-###跟着慕课网的视频学nodejs
+跟着慕课网的视频学nodejs
+==========================================
 
 使用coffeescript，学nodejs的过程中，熟悉coffeescript
 
@@ -13,3 +14,11 @@ require('./app.coffee');
 然后新建你的``app.coffee``即可用coffee编程了
 
 markdown的语法也要熟练起来啊
+
+Useage
+======================
+在根目录下输入`make`
+
+Notes
+=========================
+改版本仅供学习之用
