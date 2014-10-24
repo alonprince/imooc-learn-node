@@ -1,27 +1,45 @@
 express = require 'express'
 path = require 'path'
 mongoose = require 'mongoose'
+mongoStorage = require('connect-mongo')(express)
 Movie = require './models/movie'
 User = require './models/user'
 _ = require 'underscore'
+dbUrl = 'mongodb://localhost/imooc'
 
-
-mongoose.connect 'mongodb://localhost/imooc'
+mongoose.connect dbUrl
 
 port = process.env.PORT || 3000
 app = module.exports = express()
 
 app.set 'views','./views/pages'
 app.set 'view engine','jade'
-app.use(express.bodyParser())
+app.use express.bodyParser()
 app.use(express.static(path.join(__dirname, 'public')))
+app.use express.cookieParser()
+app.use express.session {
+	secret: 'imooc',
+	store: new mongoStorage {
+		url: dbUrl
+		collection: 'sessions'
+	}
+}
 app.locals.moment = require 'moment'
 app.listen port
 
 console.log "imooc is started on port #{port}"
 
+# pre handle user
+app.use (req, res, next) ->
+	_user = req.session.user
+	app.locals.user = _user if _user
+	
+	return next()
+
 # index page
 app.get '/', (req, res) ->
+	console.log req.session.user
+	
 	Movie.fetch (err, movies) ->
 		console.log err if err
 		res.render 'index', {
@@ -56,16 +74,21 @@ app.post '/user/signin', (req, res) ->
 
 		return res.redirect '/' if !user
 
-		console.log user
 		user.comparePassword password, (err, isMatch) ->
 			console.log err if err
 
 			if isMatch
-				console.log 'password is match'
+				req.session.user = user
 				return res.redirect '/'
 			else
 				console.log 'password is not match'
 		return	
+
+# logout
+app.get '/logout', (req, res) ->
+	delete req.session.user
+	delete app.locals.user
+	res.redirect '/'
 
 # detail
 app.get '/movie/:id', (req, res) ->
