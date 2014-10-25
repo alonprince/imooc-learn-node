@@ -6,7 +6,7 @@ $ () ->
 
 		$.ajax(
 			type: 'DELETE'
-			url: "/admin/list?id=#{id}"
+			url: "/admin/movie/list?id=#{id}"
 		).done (results) ->
 			if results.success == 1
 				tr.remove() if tr.length > 0

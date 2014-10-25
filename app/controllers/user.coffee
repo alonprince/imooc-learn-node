@@ -57,10 +57,21 @@ exports.logout = (req, res) ->
 	res.redirect '/'
 
 # userlist
-exports.userlist = (req, res) ->
+exports.list = (req, res) ->
 	User.fetch (err, users) ->
 		console.log err if err
 		res.render 'userlist', {
 			title: 'imooc 用户列表'
 			users: users
 		}
+
+# midware for user
+exports.signinRequired = (req, res, next) ->
+	user = req.session.user
+	return res.redirect '/signin' if !user
+	next()
+
+exports.adminRequired = (req, res, next) ->
+	user = req.session.user
+	return res.redirect '/signin' if user <= 10
+	next()

@@ -1,4 +1,5 @@
 Movie = require '../models/movie'
+Comment = require '../models/comment'
 _ = require 'underscore'
 
 # detail
@@ -6,10 +7,12 @@ exports.detail = (req, res) ->
 	id = req.params.id
 
 	Movie.findById id, (err, movie) ->
-		res.render 'detail', {
-			title: "imooc #{movie.title}"
-			movie: movie
-		}
+		Comment.find(movie: id).populate('from', 'name').exec (err, comments) ->
+			res.render 'detail', {
+				title: "imooc #{movie.title}"
+				movie: movie,
+				comments: comments
+			}
 
 # admin
 exports.new = (req, res) ->
@@ -61,7 +64,7 @@ exports.save = (req, res) ->
 			flash: movieObj.flash
 			summary: movieObj.summary
 		})
-
+		
 		_movie.save (err, movie) ->
 			console.log err if err
 			res.redirect "/movie/#{movie._id}"
